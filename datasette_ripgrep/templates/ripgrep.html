@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Ripgrep{% endblock %}
+
+{% block nav %}
+    <p class="crumbs">
+        <a href="{{ urls.instance() }}">home</a>
+    </p>
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>Ripgrep</h1>
+
+<form action="{{ urls.path("/-/ripgrep") }}" method="get">
+    <input type="search" name="pattern" value="{{ pattern }}">
+    <input type="submit" value="Search">
+</form>
+
+{% for result in results %}
+    {% if result.type == "begin" %}
+        <h3>{{ result.data.path.text }}</h3>
+    {% endif %}
+    {% if result.type == "match" %}
+        <pre>{{ "%-4s" | format(result.data.line_number) }} {{ result.data.lines.text }}</pre>
+    {% endif %}
+{% endfor %}
+
+{% endblock %}
