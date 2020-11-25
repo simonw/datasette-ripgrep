@@ -28,7 +28,7 @@ async def run_ripgrep(pattern, path):
         except (asyncio.exceptions.LimitOverrunError, ValueError):
             # This exception is thrown at the end of the loop
             break
-    proc.terminate()
+    await proc.wait()
     return results
 
 
