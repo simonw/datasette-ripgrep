@@ -28,6 +28,7 @@ setup(
     version=VERSION,
     packages=["datasette_ripgrep"],
     entry_points={"datasette": ["ripgrep = datasette_ripgrep"]},
+    package_data={"datasette_ripgrep": ["templates/*.html"]},
     install_requires=["datasette"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
     tests_require=["datasette-ripgrep[test]"],
