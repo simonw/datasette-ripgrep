@@ -44,7 +44,11 @@ async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
         await asyncio.wait_for(inner(results), timeout=time_limit)
     except asyncio.TimeoutError:
         time_limit_hit = True
-    proc.kill()
+    try:
+        proc.kill()
+    except OSError:
+        # Ignore 'no such process' error
+        pass
     # We should have accumulated some results anyway
     return results, time_limit_hit
 
