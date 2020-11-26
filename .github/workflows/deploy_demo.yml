@@ -47,7 +47,13 @@ jobs:
             "title": "datasette-ripgrep demo",
             "about": "simonw/datasette-ripgrep",
             "about_url": "https://github.com/simonw/datasette-ripgrep",
-            "description_html": "Try it out at <a href=\"/-/ripgrep\">/-/ripgrep</a>"
+            "description_html": "Try it out at <a href=\"/-/ripgrep\">/-/ripgrep</a>",
+            "plugins": {
+                "datasette-ripgrep": {
+                    "path": "/app/all",
+                    "time_limit": 3.0
+                 }
+            }
         }' > metadata.json
     - name: Set up Cloud Run
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -64,5 +70,4 @@ jobs:
           --static all:all \
           --install=https://github.com/simonw/datasette-ripgrep/archive/main.zip \
           --service datasette-ripgrep \
-          --plugin-secret datasette-ripgrep path /app/all \
           --apt-get-install ripgrep
