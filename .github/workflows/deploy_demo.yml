@@ -38,6 +38,8 @@ jobs:
         do
           git clone git@github.com:$line --depth 1
         done
+        find .
+        pwd
         cd ..
     - name: Create Metadata
       run: |
