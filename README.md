@@ -5,9 +5,11 @@
 [![Tests](https://github.com/simonw/datasette-ripgrep/workflows/Test/badge.svg)](https://github.com/simonw/datasette-ripgrep/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-ripgrep/blob/main/LICENSE)
 
-HIGHLY EXPERIMENTAL: Configurable Datasette plugin running ripgrep
+Configurable Datasette plugin running ripgrep
 
-This plugin is a weird experiment. It probably shouldn't even be a Datasette plugin at all! Do not attempt to run this on a public Datasette instance.
+## Demo
+
+Try this plugin out at https://ripgrep.datasette.io/-/ripgrep - where you can run regular expression searches across the source code of Datasette and all of the `datasette-*` plugins belonging to the [simonw GitHub user](https://github.com/simonw).
 
 ## Installation
 
