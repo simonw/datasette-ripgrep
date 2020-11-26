@@ -32,7 +32,7 @@ jobs:
         mkdir all
         cd all
         for line in $(
-          sqlite-utils simonw.db "select full_name from repos where full_name like 'simonw/datasette%'" \
+          sqlite-utils ../simonw.db "select full_name from repos where full_name like 'simonw/datasette%'" \
           --csv --no-headers
         )
         do
