@@ -17,6 +17,8 @@
     <input type="submit" value="Search">
 </form>
 
+{% if time_limit_hit %}<p>Time limit exceeded.</p>{% endif %}
+
 {% for result in results %}
     {% if result.type == "begin" %}
         <h3>{{ result.data.path.text }}</h3>

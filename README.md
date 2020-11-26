@@ -33,6 +33,13 @@ This plugin requires configuration: it needs to a `path` setting so that it know
 
 The plugin will add an interface at `/-/ripgrep` for running searches.
 
+## Configuration
+
+The `"path"` configuration is required. Optional extra configuration options are:
+
+- `time_limit` - floating point number. The `rg` process will be terminated if it takes longer than this limit. The default is one second, `1.0`.
+- `max_lines` - integer. The `rg` process will be terminated if it returns more than this number of lines. The default is `2000`.
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
