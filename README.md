@@ -13,9 +13,10 @@ Try this plugin out at https://ripgrep.datasette.io/-/ripgrep - where you can ru
 
 Some example searches:
 
-* [with.\*AsyncClient](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient) - regular expression search for `with.*AsyncClient`
-* [.plugin_config, literal=on](https://ripgrep.datasette.io/-/ripgrep?pattern=.plugin_config\(&literal=on) - a non-regular expression search for `.plugin_config(`
-- [with.\*AsyncClient glob=datasette/**](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient&glob=datasette%2F**) - search for that pattern only within the `datasette/` top folder
+- [with.\*AsyncClient](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient) - regular expression search for `with.*AsyncClient`
+- [.plugin_config, literal=on](https://ripgrep.datasette.io/-/ripgrep?pattern=.plugin_config\(&literal=on) - a non-regular expression search for `.plugin_config(`
+- [with.\*AsyncClient glob=datasette/\*\*](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient&glob=datasette%2F%2A%2A) - search for that pattern only within the `datasette/` top folder
+- ["sqlite-utils\[">\] glob=setup.py](https://ripgrep.datasette.io/-/ripgrep?pattern=%22sqlite-utils%5B%22%3E%5D&glob=setup.py) - a regular expression search for packages that depend on either `sqlite-utils` or `sqlite-utils>=some-version`
 - [test glob=!\*.html](https://ripgrep.datasette.io/-/ripgrep?pattern=test&glob=%21*.html) - search for the string `test` but exclude results in HTML files
 
 ## Installation
