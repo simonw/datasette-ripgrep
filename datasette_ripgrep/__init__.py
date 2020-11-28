@@ -34,7 +34,6 @@ async def run_ripgrep(
         limit=1024 * 1024,
         cwd=path,
     )
-    print(args)
     max_lines_hit = False
     time_limit_hit = False
     results = []
