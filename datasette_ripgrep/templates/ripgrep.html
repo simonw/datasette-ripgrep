@@ -62,10 +62,13 @@ pre.match {
 {% for result in results %}
     {% if result.type == "begin" %}
         <h3>{{ fix_path(result.data.path.text) }}</h3>
+        <div style="overflow-x: auto">{% set ended=0 %}
     {% endif %}
     {% if result.type in ("match", "context") %}
         <pre{% if result.type == "match" %} class="match"{% endif %}><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
     {% endif %}
+    {% if result.type == "end" %}{% set ended=1 %}    </div>{% endif %}
 {% endfor %}
+{% if not ended %}</div>{% endif %}
 
 {% endblock %}
