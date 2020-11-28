@@ -38,14 +38,5 @@ async def test_plugin_is_installed(datasette):
 async def test_ripgrep_search(datasette):
     response = await datasette.client.get("/-/ripgrep?pattern=est")
     html = re.sub(r"(\s+\n)+", "\n", response.text)
-    assert (
-        (
-            """
-        <h3>one.txt</h3>
-        <pre>4    Is a test file</pre>
-        <h3>two.txt</h3>
-        <pre>1    Second test file</pre>
-        """.strip()
-        )
-        in html, html
-    )
+    assert "<h3>one.txt</h3>\n        <pre>4    Is a test file</pre>" in html
+    assert "<h3>two.txt</h3>\n        <pre>1    Second test file</pre>" in html
