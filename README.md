@@ -5,7 +5,7 @@
 [![Tests](https://github.com/simonw/datasette-ripgrep/workflows/Test/badge.svg)](https://github.com/simonw/datasette-ripgrep/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-ripgrep/blob/main/LICENSE)
 
-Web interface for searching your code using ripgrep, built as a Datasette plugin
+Web interface for searching your code using ripgrep, built as a [Datasette](https://datasette.io/) plugin
 
 ## Demo
 
