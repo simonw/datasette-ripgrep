@@ -13,7 +13,7 @@ def datasette(tmp_path_factory):
     (src / "one.txt").write_text("Hello\nThere\nThis\nIs a test file")
     (src / "sub").mkdir()
     (src / "sub/two.txt").write_text("Second test file")
-    (src / "{{curlies}}.txt").write_text("File with curlies in the name")
+    (src / "{{curlies}}.txt").write_text("File with curlies in the name -v")
     return Datasette(
         [],
         memory=True,
@@ -48,6 +48,18 @@ async def test_ripgrep_search(datasette):
     assert (
         "<h3>sub/two.txt</h3>"
         '\n        <pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>'
+    ) in html
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not shutil.which("rg"), reason="rg executable not found")
+async def test_ripgrep_pattern_not_treated_as_flag(datasette):
+    response = await datasette.client.get("/-/ripgrep?pattern=-v")
+    assert "<title>Ripgrep: -v</title>" in response.text
+    html = re.sub(r"(\s+\n)+", "\n", response.text)
+    assert (
+        "<h3>{{curlies}}.txt</h3>\n"
+        '        <pre><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a> File with curlies in the name -v</pre>'
     ) in html
 
 

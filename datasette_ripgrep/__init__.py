@@ -9,6 +9,7 @@ import urllib
 async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
     proc = await asyncio.create_subprocess_exec(
         "rg",
+        "-e",
         pattern,
         path,
         "--json",
@@ -82,6 +83,7 @@ async def ripgrep(request, datasette):
                 "results": results,
                 "fix_path": fix_path,
                 "time_limit_hit": time_limit_hit,
+                "url_quote": urllib.parse.quote,
             },
         )
     )

@@ -33,7 +33,7 @@ pre a:link {
         <h3>{{ fix_path(result.data.path.text) }}</h3>
     {% endif %}
     {% if result.type == "match" %}
-        <pre><a href="{{ urls.path("/-/ripgrep/view/" + fix_path(result.data.path.text)) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
+        <pre><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
     {% endif %}
 {% endfor %}
 
