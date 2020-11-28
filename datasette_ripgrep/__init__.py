@@ -3,6 +3,7 @@ from datasette.utils.asgi import Response
 import asyncio
 import json
 from pathlib import Path
+import urllib
 
 
 async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
@@ -70,7 +71,7 @@ async def ripgrep(request, datasette):
         )
 
     def fix_path(path_):
-        return Path(path_).relative_to(path)
+        return str(Path(path_).relative_to(path))
 
     return Response.html(
         await datasette.render_template(
@@ -85,6 +86,36 @@ async def ripgrep(request, datasette):
     )
 
 
+async def view_file(request, datasette):
+    config = datasette.plugin_config("datasette-ripgrep") or {}
+    subpath = urllib.parse.unquote(request.url_vars["subpath"])
+    path = config.get("path")
+    if not path:
+        return Response.html("The path plugin configuration is required.", status=500)
+    filepath = Path(path) / subpath
+    filepath = filepath.resolve()
+    # Make absolutely sure it's still inside the root
+    if not str(filepath).startswith(str(path)):
+        return Response.html("Filepath must be inside path directory.", status=403)
+    if not filepath.exists():
+        return Response.text("File not found: {}".format(subpath), status=404)
+    lines = filepath.read_text().split("\n")
+    widest_line_number = len(str(len(lines) + 1))
+    return Response.html(
+        await datasette.render_template(
+            "ripgrep_view_file.html",
+            {
+                "subpath": subpath,
+                "lines": enumerate(lines),
+                "widest_line_number": widest_line_number,
+            },
+        )
+    )
+
+
 @hookimpl
 def register_routes():
-    return (("/-/ripgrep", ripgrep),)
+    return (
+        ("^/-/ripgrep$", ripgrep),
+        ("^/-/ripgrep/view/(?P<subpath>.*)$", view_file),
+    )

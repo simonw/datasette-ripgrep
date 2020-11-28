@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subpath }}{% endblock %}
+
+{% block extra_head %}
+<style>
+code:before {
+    content: attr(data-line);
+    display: inline-block;
+    width: {{ widest_line_number + 1.5 }}ch;
+    -webkit-user-select: none;
+    color: #666;
+}
+</style>
+<style id="highlightStyle"></style>
+    
+{% endblock %}
+
+{% block nav %}
+    <p class="crumbs">
+        <a href="{{ urls.instance() }}">home</a>
+    </p>
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>{{ subpath }}</h1>
+
+<pre>{% for i, line in lines -%}
+<code id="L{{ i + 1 }}" data-line="{{ i + 1 }}">{{ line if line else "&nbsp;"|safe }}</code>
+{% endfor %}</pre>
+
+<script>
+var highlightStyle = document.getElementById('highlightStyle');
+function highlightLineFromFragment() {
+    if (/L\d+/.exec(location.hash)) {
+        highlightStyle.innerText = `${location.hash} { background-color: yellow; }`;
+    }
+}
+highlightLineFromFragment();
+window.addEventListener("hashchange", highlightLineFromFragment);
+</script>
+
+{% endblock %}

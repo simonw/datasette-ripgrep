@@ -2,6 +2,15 @@
 
 {% block title %}Ripgrep{% endblock %}
 
+{% block extra_head %}
+<style>
+pre a:link {
+    text-decoration: none;
+    color: #666;
+}
+</style>
+{% endblock %}
+
 {% block nav %}
     <p class="crumbs">
         <a href="{{ urls.instance() }}">home</a>
@@ -24,7 +33,7 @@
         <h3>{{ fix_path(result.data.path.text) }}</h3>
     {% endif %}
     {% if result.type == "match" %}
-        <pre>{{ "%-4s" | format(result.data.line_number) }} {{ result.data.lines.text }}</pre>
+        <pre><a href="{{ urls.path("/-/ripgrep/view/" + fix_path(result.data.path.text)) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
     {% endif %}
 {% endfor %}
 
