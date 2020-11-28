@@ -25,7 +25,7 @@ Install this plugin in the same environment as Datasette.
 
     $ datasette install datasette-ripgrep
 
-The `rg` executable needs to be installed such that it can be run by this tool.
+The `rg` executable needs to be [installed](https://github.com/BurntSushi/ripgrep/blob/master/README.md#installation) such that it can be run by this tool.
 
 ## Usage
 
