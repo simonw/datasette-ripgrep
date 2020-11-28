@@ -11,7 +11,9 @@ def datasette(tmp_path_factory):
     src = root / "src"
     src.mkdir()
     (src / "one.txt").write_text("Hello\nThere\nThis\nIs a test file")
-    (src / "two.txt").write_text("Second test file")
+    (src / "sub").mkdir()
+    (src / "sub/two.txt").write_text("Second test file")
+    (src / "{{curlies}}.txt").write_text("File with curlies in the name")
     return Datasette(
         [],
         memory=True,
@@ -43,8 +45,8 @@ async def test_ripgrep_search(datasette):
         '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a test file</pre>'
     ) in html
     assert (
-        "<h3>two.txt</h3>"
-        '\n        <pre><a href="/-/ripgrep/view/two.txt#L1">1   </a> Second test file</pre>'
+        "<h3>sub/two.txt</h3>"
+        '\n        <pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>'
     ) in html
 
 
@@ -63,3 +65,24 @@ async def test_view_file(datasette):
         )
         in response.text
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "path,expected_status,expected_message",
+    (
+        ("three.txt", 404, "File not found: three.txt"),
+        ("..%2F..%2F..%2Ftmp%2Fblah.txt", 403, "File must be inside path directory"),
+    ),
+)
+async def test_view_file_errors(datasette, path, expected_status, expected_message):
+    response = await datasette.client.get("/-/ripgrep/view/" + path)
+    assert response.status_code == expected_status
+    assert expected_message in response.text
+
+
+@pytest.mark.asyncio
+async def test_view_file_with_curlies(datasette):
+    response = await datasette.client.get("/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt")
+    assert response.status_code == 200
+    assert "File with curlies in the name" in response.text

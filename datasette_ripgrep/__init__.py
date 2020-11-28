@@ -96,7 +96,7 @@ async def view_file(request, datasette):
     filepath = filepath.resolve()
     # Make absolutely sure it's still inside the root
     if not str(filepath).startswith(str(path)):
-        return Response.html("Filepath must be inside path directory.", status=403)
+        return Response.html("File must be inside path directory", status=403)
     if not filepath.exists():
         return Response.text("File not found: {}".format(subpath), status=404)
     lines = filepath.read_text().split("\n")
