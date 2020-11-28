@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ripgrep{% if pattern %}: {{ pattern }}{% endif %}{% endblock %}
+{% block title %}ripgrep{% if pattern %}: {{ pattern }}{% endif %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -19,7 +19,7 @@ pre a:link {
 {% endblock %}
 
 {% block content %}
-<h1>Ripgrep</h1>
+<h1>ripgrep</h1>
 
 <form action="{{ urls.path("/-/ripgrep") }}" method="get">
     <input type="search" name="pattern" value="{{ pattern }}">
