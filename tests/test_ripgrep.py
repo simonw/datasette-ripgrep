@@ -47,5 +47,5 @@ async def test_ripgrep_search(datasette):
         <pre>1    Second test file</pre>
         """.strip()
         )
-        in html
+        in html, html
     )
