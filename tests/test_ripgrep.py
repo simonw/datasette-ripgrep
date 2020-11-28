@@ -186,6 +186,13 @@ async def test_view_file_with_curlies(datasette):
 
 
 @pytest.mark.asyncio
+async def test_menu_link(datasette):
+    response = await datasette.client.get("/")
+    assert response.status_code == 200
+    assert '<li><a href="/-/ripgrep">ripgrep search</a></li>' in response.text
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "metadata,authenticated,path,expected_status",
     [

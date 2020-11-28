@@ -165,3 +165,10 @@ def register_routes():
         ("^/-/ripgrep$", ripgrep),
         ("^/-/ripgrep/view/(?P<subpath>.*)$", view_file),
     )
+
+
+@hookimpl
+def menu_links(datasette, actor):
+    return [
+        {"href": datasette.urls.path("/-/ripgrep"), "label": "ripgrep search"},
+    ]
