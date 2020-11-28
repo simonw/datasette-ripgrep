@@ -21,7 +21,9 @@ The `rg` executable needs to be installed such that it can be run by this tool.
 
 ## Usage
 
-This plugin requires configuration: it needs to a `path` setting so that it knows where to run searches:
+This plugin requires configuration: it needs to a `path` setting so that it knows where to run searches.
+
+Create a `metadata.json` file that looks like this:
 
 ```json
 {
@@ -33,9 +35,9 @@ This plugin requires configuration: it needs to a `path` setting so that it know
 }
 ```
 
-The plugin will add an interface at `/-/ripgrep` for running searches.
+Now run Datasette using `datasette -m metadata.json`. The plugin will add an interface at `/-/ripgrep` for running searches.
 
-## Configuration
+## Plugin configuration
 
 The `"path"` configuration is required. Optional extra configuration options are:
 
