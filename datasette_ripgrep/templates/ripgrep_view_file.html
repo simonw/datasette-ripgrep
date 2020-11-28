@@ -11,9 +11,10 @@ code:before {
     -webkit-user-select: none;
     color: #666;
 }
+:target {
+    background-color: #FFFF99;
+}
 </style>
-<style id="highlightStyle"></style>
-    
 {% endblock %}
 
 {% block nav %}
@@ -29,16 +30,5 @@ code:before {
 <pre>{% for i, line in lines -%}
 <code id="L{{ i + 1 }}" data-line="{{ i + 1 }}">{{ line if line else "&nbsp;"|safe }}</code>
 {% endfor %}</pre>
-
-<script>
-var highlightStyle = document.getElementById('highlightStyle');
-function highlightLineFromFragment() {
-    if (/^#L\d+$/.exec(location.hash)) {
-        highlightStyle.innerText = `${location.hash} { background-color: #FFFF99; }`;
-    }
-}
-highlightLineFromFragment();
-window.addEventListener("hashchange", highlightLineFromFragment);
-</script>
 
 {% endblock %}
