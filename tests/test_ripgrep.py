@@ -39,6 +39,7 @@ async def test_plugin_is_installed(datasette):
 @pytest.mark.skipif(not shutil.which("rg"), reason="rg executable not found")
 async def test_ripgrep_search(datasette):
     response = await datasette.client.get("/-/ripgrep?pattern=est")
+    assert "<title>Ripgrep: est</title>" in response.text
     html = re.sub(r"(\s+\n)+", "\n", response.text)
     assert (
         "<h3>one.txt</h3>\n"

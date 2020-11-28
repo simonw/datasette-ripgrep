@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ripgrep{% endblock %}
+{% block title %}Ripgrep{% if pattern %}: {{ pattern }}{% endif %}{% endblock %}
 
 {% block extra_head %}
 <style>
