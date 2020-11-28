@@ -7,9 +7,17 @@ import urllib
 
 
 async def run_ripgrep(
-    pattern, path, time_limit=1.0, max_lines=2000, ignore=False, literal=False
+    pattern,
+    path,
+    time_limit=1.0,
+    max_lines=2000,
+    ignore=False,
+    literal=False,
+    context=2,
 ):
     args = ["-e", pattern, path, "--json"]
+    if context:
+        args.extend(["-C", str(context)])
     if ignore:
         args.append("-i")
     if literal:

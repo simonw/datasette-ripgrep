@@ -12,6 +12,9 @@ form.ripgrep label {
     font-weight: normal;
     display: inline;
 }
+pre.match {
+    background-color: #FFFF99;
+}
 </style>
 {% endblock %}
 
@@ -39,8 +42,8 @@ form.ripgrep label {
     {% if result.type == "begin" %}
         <h3>{{ fix_path(result.data.path.text) }}</h3>
     {% endif %}
-    {% if result.type == "match" %}
-        <pre><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
+    {% if result.type in ("match", "context") %}
+        <pre{% if result.type == "match" %} class="match"{% endif %}><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
     {% endif %}
 {% endfor %}
 

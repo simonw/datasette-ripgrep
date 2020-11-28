@@ -34,7 +34,7 @@ code:before {
 var highlightStyle = document.getElementById('highlightStyle');
 function highlightLineFromFragment() {
     if (/^#L\d+$/.exec(location.hash)) {
-        highlightStyle.innerText = `${location.hash} { background-color: yellow; }`;
+        highlightStyle.innerText = `${location.hash} { background-color: #FFFF99; }`;
     }
 }
 highlightLineFromFragment();

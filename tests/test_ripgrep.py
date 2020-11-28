@@ -43,28 +43,27 @@ async def test_plugin_is_installed(datasette):
         (
             "pattern=est",
             "est",
-            (
-                (
-                    "<h3>one.txt</h3>\n"
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>'
-                ),
-                (
-                    "<h3>sub/two.txt</h3>"
-                    '\n        <pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>'
-                ),
-            ),
+            [
+                # This one also tests the context
+                "<h3>one.txt</h3>\n"
+                '        <pre><a href="/-/ripgrep/view/one.txt#L2">2   </a> There</pre>\n'
+                '        <pre><a href="/-/ripgrep/view/one.txt#L3">3   </a> This</pre>\n'
+                '        <pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> '
+                "Is a.test file</pre>",
+                "<h3>sub/two.txt</h3>\n"
+                '        <pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   '
+                "</a> Second test file</pre>",
+            ],
             [],
         ),
         ("pattern=EST", "EST", [], ["<h3>one.txt</h3>\n"]),
         (
             "pattern=EST&ignore=on",
             "EST",
-            (
-                (
-                    "<h3>one.txt</h3>\n"
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>'
-                )
-            ),
+            [
+                "<h3>one.txt</h3>",
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+            ],
             [],
         ),
         (
@@ -72,10 +71,10 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
                 # " test" matches regex ".test"
                 "<h3>sub/two.txt</h3>",
-                '<pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
             ],
             [],
         ),
@@ -84,12 +83,12 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
             ],
             # " test" does not match literal ".test"
             [
                 "<h3>sub/two.txt</h3>",
-                '<pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
             ],
         ),
     ),
@@ -99,7 +98,7 @@ async def test_ripgrep_search(
 ):
     response = await datasette.client.get("/-/ripgrep?{}".format(querystring))
     assert "<title>ripgrep: {}</title>".format(expected_title) in response.text
-    html = re.sub(r"(\s+\n)+", "\n", response.text)
+    html = re.sub(r"(\s*\n)+", "\n", response.text).replace("\n</pre>", "</pre>")
     for fragment in expected_fragments:
         assert fragment in html
     for fragment in unexpected_fragments:
@@ -114,7 +113,7 @@ async def test_ripgrep_pattern_not_treated_as_flag(datasette):
     html = re.sub(r"(\s+\n)+", "\n", response.text)
     assert (
         "<h3>{{curlies}}.txt</h3>\n"
-        '        <pre><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a> File with curlies in the name -v</pre>'
+        '        <pre class="match"><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a> File with curlies in the name -v</pre>'
     ) in html
 
 
