@@ -6,13 +6,17 @@ from pathlib import Path
 import urllib
 
 
-async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
+async def run_ripgrep(
+    pattern, path, time_limit=1.0, max_lines=2000, ignore=False, literal=False
+):
+    args = ["-e", pattern, path, "--json"]
+    if ignore:
+        args.append("-i")
+    if literal:
+        args.append("-F")
     proc = await asyncio.create_subprocess_exec(
         "rg",
-        "-e",
-        pattern,
-        path,
-        "--json",
+        *args,
         stdout=asyncio.subprocess.PIPE,
         stdin=asyncio.subprocess.PIPE,
         limit=1024 * 1024,
@@ -59,17 +63,26 @@ async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
 async def ripgrep(request, datasette):
     await check_permission(request, datasette)
     pattern = (request.args.get("pattern") or "").strip()
+    ignore = request.args.get("ignore")
+    literal = request.args.get("literal")
+
     config = datasette.plugin_config("datasette-ripgrep") or {}
     time_limit = config.get("time_limit") or 1.0
     max_lines = config.get("max_lines") or 2000
     path = config.get("path")
     if not path:
         return Response.html("The path plugin configuration is required.", status=500)
+
     results = []
     time_limit_hit = False
     if pattern:
         results, time_limit_hit = await run_ripgrep(
-            pattern, path, time_limit=time_limit, max_lines=max_lines
+            pattern,
+            path,
+            time_limit=time_limit,
+            max_lines=max_lines,
+            ignore=ignore,
+            literal=literal,
         )
 
     def fix_path(path_):
@@ -84,6 +97,8 @@ async def ripgrep(request, datasette):
                 "fix_path": fix_path,
                 "time_limit_hit": time_limit_hit,
                 "url_quote": urllib.parse.quote,
+                "literal": literal,
+                "ignore": ignore,
             },
         )
     )

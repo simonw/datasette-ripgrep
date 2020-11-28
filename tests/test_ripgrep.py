@@ -10,7 +10,7 @@ def datasette(tmp_path_factory):
     root = tmp_path_factory.mktemp("root")
     src = root / "src"
     src.mkdir()
-    (src / "one.txt").write_text("Hello\nThere\nThis\nIs a test file")
+    (src / "one.txt").write_text("Hello\nThere\nThis\nIs a.test file")
     (src / "sub").mkdir()
     (src / "sub/two.txt").write_text("Second test file")
     (src / "{{curlies}}.txt").write_text("File with curlies in the name -v")
@@ -37,18 +37,73 @@ async def test_plugin_is_installed(datasette):
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(not shutil.which("rg"), reason="rg executable not found")
-async def test_ripgrep_search(datasette):
-    response = await datasette.client.get("/-/ripgrep?pattern=est")
-    assert "<title>ripgrep: est</title>" in response.text
+@pytest.mark.parametrize(
+    "querystring,expected_title,expected_fragments,unexpected_fragments",
+    (
+        (
+            "pattern=est",
+            "est",
+            (
+                (
+                    "<h3>one.txt</h3>\n"
+                    '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>'
+                ),
+                (
+                    "<h3>sub/two.txt</h3>"
+                    '\n        <pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>'
+                ),
+            ),
+            [],
+        ),
+        ("pattern=EST", "EST", [], ["<h3>one.txt</h3>\n"]),
+        (
+            "pattern=EST&ignore=on",
+            "EST",
+            (
+                (
+                    "<h3>one.txt</h3>\n"
+                    '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>'
+                )
+            ),
+            [],
+        ),
+        (
+            "pattern=.test",
+            ".test",
+            [
+                "<h3>one.txt</h3>",
+                '<pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                # " test" matches regex ".test"
+                "<h3>sub/two.txt</h3>",
+                '<pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+            ],
+            [],
+        ),
+        (
+            "pattern=.test&literal=on",
+            ".test",
+            [
+                "<h3>one.txt</h3>",
+                '<pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+            ],
+            # " test" does not match literal ".test"
+            [
+                "<h3>sub/two.txt</h3>",
+                '<pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+            ],
+        ),
+    ),
+)
+async def test_ripgrep_search(
+    datasette, querystring, expected_title, expected_fragments, unexpected_fragments
+):
+    response = await datasette.client.get("/-/ripgrep?{}".format(querystring))
+    assert "<title>ripgrep: {}</title>".format(expected_title) in response.text
     html = re.sub(r"(\s+\n)+", "\n", response.text)
-    assert (
-        "<h3>one.txt</h3>\n"
-        '        <pre><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a test file</pre>'
-    ) in html
-    assert (
-        "<h3>sub/two.txt</h3>"
-        '\n        <pre><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>'
-    ) in html
+    for fragment in expected_fragments:
+        assert fragment in html
+    for fragment in unexpected_fragments:
+        assert fragment not in html
 
 
 @pytest.mark.asyncio
@@ -73,7 +128,7 @@ async def test_view_file(datasette):
     <pre><code id="L1" data-line="1">Hello</code>
     <code id="L2" data-line="2">There</code>
     <code id="L3" data-line="3">This</code>
-    <code id="L4" data-line="4">Is a test file</code>
+    <code id="L4" data-line="4">Is a.test file</code>
     </pre>"""
         )
         in response.text

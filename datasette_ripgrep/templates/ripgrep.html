@@ -8,6 +8,10 @@ pre a:link {
     text-decoration: none;
     color: #666;
 }
+form.ripgrep label {
+    font-weight: normal;
+    display: inline;
+}
 </style>
 {% endblock %}
 
@@ -21,9 +25,12 @@ pre a:link {
 {% block content %}
 <h1>ripgrep</h1>
 
-<form action="{{ urls.path("/-/ripgrep") }}" method="get">
-    <input type="search" name="pattern" value="{{ pattern }}">
-    <input type="submit" value="Search">
+<form class="ripgrep" action="{{ urls.path("/-/ripgrep") }}" method="get">
+    <p>
+        <input type="search" name="pattern" value="{{ pattern }}">
+        <input type="submit" value="Search">
+    </p>
+    <p><strong>Options:</strong> <label><input type="checkbox" name="literal"{% if literal %} checked={% endif %}> Literal search (not regex)</label> <label><input type="checkbox" name="ignore"{% if ignore %} checked={% endif %}> Ignore case</label></p>
 </form>
 
 {% if time_limit_hit %}<p>Time limit exceeded.</p>{% endif %}
