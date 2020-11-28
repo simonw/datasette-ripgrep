@@ -14,7 +14,7 @@ def get_long_description():
 
 setup(
     name="datasette-ripgrep",
-    description="Configurable Datasette plugin running ripgrep",
+    description="Web interface for searching your code using ripgrep, built as a Datasette plugin",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     author="Simon Willison",
