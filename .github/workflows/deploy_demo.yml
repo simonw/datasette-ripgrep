@@ -37,6 +37,7 @@ jobs:
             full_name like 'simonw/datasette%'
             or full_name like 'simonw/sqlite-%'
             or full_name like '%-to-sqlite'
+            or full_name like '%/dogsheep%'
           ) and full_name not like '%-support' and fork = 0
         )"
     - name: Git clone my datasette* repos
