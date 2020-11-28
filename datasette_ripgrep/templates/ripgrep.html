@@ -15,6 +15,14 @@ form.ripgrep label {
 pre.match {
     background-color: #FFFF99;
 }
+.glob-examples {
+    font-size: 0.85em;
+}
+.glob-examples code {
+    background-color: #eee;
+    padding: 0 2px;
+    border: 1px solid #ccc;
+}
 </style>
 {% endblock %}
 
@@ -34,6 +42,19 @@ pre.match {
         <input type="submit" value="Search">
     </p>
     <p><strong>Options:</strong> <label><input type="checkbox" name="literal"{% if literal %} checked={% endif %}> Literal search (not regex)</label> <label><input type="checkbox" name="ignore"{% if ignore %} checked={% endif %}> Ignore case</label></p>
+    <p>
+        <label><strong>File pattern</strong>: &nbsp;<input type="text" style="max-width: 20em" name="glob" value="{{ globs.0 }}"></label>
+    </p>
+    <p class="glob-examples">For example <code>*.py</code> or <code>**/templates/**/*.html</code> or <code>datasette/**</code> or </code><code>!setup.py</code>
+    </p>
+    {% if globs|length > 1 %}
+    <p><strong>Additional patterns</strong></p>
+        {% for glob in globs[1:] %}
+            <p>
+                <input type="text" style="max-width: 20em" name="glob" value="{{ glob }}">
+            </p>
+        {% endfor %}
+    {% endif %}
 </form>
 
 {% if time_limit_hit %}<p>Time limit exceeded.</p>{% endif %}

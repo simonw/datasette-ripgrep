@@ -9,6 +9,7 @@ import urllib
 async def run_ripgrep(
     pattern,
     path,
+    globs=None,
     time_limit=1.0,
     max_lines=2000,
     ignore=False,
@@ -22,13 +23,18 @@ async def run_ripgrep(
         args.append("-i")
     if literal:
         args.append("-F")
+    if globs:
+        for glob in globs:
+            args.extend(["--glob", glob])
     proc = await asyncio.create_subprocess_exec(
         "rg",
         *args,
         stdout=asyncio.subprocess.PIPE,
         stdin=asyncio.subprocess.PIPE,
         limit=1024 * 1024,
+        cwd=path,
     )
+    print(args)
     max_lines_hit = False
     time_limit_hit = False
     results = []
@@ -73,6 +79,7 @@ async def ripgrep(request, datasette):
     pattern = (request.args.get("pattern") or "").strip()
     ignore = request.args.get("ignore")
     literal = request.args.get("literal")
+    globs = [g.strip() for g in request.args.getlist("glob") if g.strip()]
 
     config = datasette.plugin_config("datasette-ripgrep") or {}
     time_limit = config.get("time_limit") or 1.0
@@ -87,6 +94,7 @@ async def ripgrep(request, datasette):
         results, time_limit_hit = await run_ripgrep(
             pattern,
             path,
+            globs=globs,
             time_limit=time_limit,
             max_lines=max_lines,
             ignore=ignore,
@@ -107,6 +115,7 @@ async def ripgrep(request, datasette):
                 "url_quote": urllib.parse.quote,
                 "literal": literal,
                 "ignore": ignore,
+                "globs": globs,
             },
         )
     )

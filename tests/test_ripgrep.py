@@ -91,6 +91,23 @@ async def test_plugin_is_installed(datasette):
                 '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
             ],
         ),
+        (
+            "pattern=test&glob=two.txt",
+            "test",
+            [
+                "<h3>sub/two.txt</h3>",
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+            ],
+            ["<h3>one.txt</h3>"],
+        ),
+        (
+            "pattern=test&glob=!two.txt",
+            "test",
+            [
+                "<h3>one.txt</h3>",
+            ],
+            ["<h3>sub/two.txt</h3>"],
+        ),
     ),
 )
 async def test_ripgrep_search(
