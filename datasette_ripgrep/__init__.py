@@ -1,5 +1,5 @@
 from datasette import hookimpl
-from datasette.utils.asgi import Response
+from datasette.utils.asgi import Response, Forbidden
 import asyncio
 import json
 from pathlib import Path
@@ -56,6 +56,7 @@ async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
 
 
 async def ripgrep(request, datasette):
+    await check_permission(request, datasette)
     pattern = (request.args.get("pattern") or "").strip()
     config = datasette.plugin_config("datasette-ripgrep") or {}
     time_limit = config.get("time_limit") or 1.0
@@ -87,6 +88,7 @@ async def ripgrep(request, datasette):
 
 
 async def view_file(request, datasette):
+    await check_permission(request, datasette)
     config = datasette.plugin_config("datasette-ripgrep") or {}
     subpath = urllib.parse.unquote(request.url_vars["subpath"])
     path = config.get("path")
@@ -111,6 +113,17 @@ async def view_file(request, datasette):
             },
         )
     )
+
+
+async def check_permission(request, datasette):
+    if (
+        await datasette.permission_allowed(
+            request.actor,
+            "view-instance",
+            default=None,
+        )
+    ) is False:
+        raise Forbidden("view-instance denied")
 
 
 @hookimpl

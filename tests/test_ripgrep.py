@@ -87,3 +87,37 @@ async def test_view_file_with_curlies(datasette):
     response = await datasette.client.get("/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt")
     assert response.status_code == 200
     assert "File with curlies in the name" in response.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "metadata,authenticated,path,expected_status",
+    [
+        # Deny all access
+        ({"allow": False}, False, "/-/ripgrep", 403),
+        ({"allow": False}, True, "/-/ripgrep", 403),
+        ({"allow": False}, False, "/-/ripgrep/view/one.txt", 403),
+        ({"allow": False}, True, "/-/ripgrep/view/one.txt", 403),
+        # Allow all access
+        ({"allow": True}, False, "/-/ripgrep", 200),
+        ({"allow": True}, True, "/-/ripgrep", 200),
+        ({"allow": True}, False, "/-/ripgrep/view/one.txt", 200),
+        ({"allow": True}, True, "/-/ripgrep/view/one.txt", 200),
+        # Allow only to logged in user
+        ({"allow": {"id": "user"}}, False, "/-/ripgrep", 403),
+        ({"allow": {"id": "user"}}, True, "/-/ripgrep", 200),
+        ({"allow": {"id": "user"}}, False, "/-/ripgrep/view/one.txt", 403),
+        ({"allow": {"id": "user"}}, True, "/-/ripgrep/view/one.txt", 200),
+    ],
+)
+async def test_permissions(datasette, metadata, authenticated, path, expected_status):
+    original = datasette._metadata
+    try:
+        datasette._metadata = {**datasette._metadata, **metadata}
+        cookies = {}
+        if authenticated:
+            cookies["ds_actor"] = datasette.sign({"a": {"id": "user"}}, "actor")
+        response = await datasette.client.get(path, cookies=cookies)
+        assert response.status_code == expected_status
+    finally:
+        datasette._metadata = original
