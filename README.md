@@ -11,6 +11,13 @@ Configurable Datasette plugin running ripgrep
 
 Try this plugin out at https://ripgrep.datasette.io/-/ripgrep - where you can run regular expression searches across the source code of Datasette and all of the `datasette-*` plugins belonging to the [simonw GitHub user](https://github.com/simonw).
 
+Some example searches:
+
+* [with.\*AsyncClient](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient) - regular expression search for `with.*AsyncClient`
+* [.plugin_config, literal=on](https://ripgrep.datasette.io/-/ripgrep?pattern=.plugin_config\(&literal=on) - a non-regular expression search for `.plugin_config(`
+- [with.\*AsyncClient glob=datasette/**](https://ripgrep.datasette.io/-/ripgrep?pattern=with.*AsyncClient&glob=datasette%2F**) - search for that pattern only within the `datasette/` top folder
+- [test glob=!\*.html](https://ripgrep.datasette.io/-/ripgrep?pattern=test&glob=%21*.html) - search for the string `test` but exclude results in HTML files
+
 ## Installation
 
 Install this plugin in the same environment as Datasette.
