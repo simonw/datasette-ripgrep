@@ -21,7 +21,7 @@
 
 {% for result in results %}
     {% if result.type == "begin" %}
-        <h3>{{ result.data.path.text }}</h3>
+        <h3>{{ fix_path(result.data.path.text) }}</h3>
     {% endif %}
     {% if result.type == "match" %}
         <pre>{{ "%-4s" | format(result.data.line_number) }} {{ result.data.lines.text }}</pre>

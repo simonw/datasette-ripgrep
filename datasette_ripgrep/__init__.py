@@ -2,6 +2,7 @@ from datasette import hookimpl
 from datasette.utils.asgi import Response
 import asyncio
 import json
+from pathlib import Path
 
 
 async def run_ripgrep(pattern, path, time_limit=1.0, max_lines=2000):
@@ -67,12 +68,17 @@ async def ripgrep(request, datasette):
         results, time_limit_hit = await run_ripgrep(
             pattern, path, time_limit=time_limit, max_lines=max_lines
         )
+
+    def fix_path(path_):
+        return Path(path_).relative_to(path)
+
     return Response.html(
         await datasette.render_template(
             "ripgrep.html",
             {
                 "pattern": pattern,
                 "results": results,
+                "fix_path": fix_path,
                 "time_limit_hit": time_limit_hit,
             },
         )
