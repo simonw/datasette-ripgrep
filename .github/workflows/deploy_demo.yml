@@ -43,20 +43,36 @@ jobs:
         find .
         pwd
         cd ..
-    - name: Create Metadata
+    - name: Create metadata.yml
       run: |
-        echo '{
-            "title": "datasette-ripgrep demo",
-            "about": "simonw/datasette-ripgrep",
-            "about_url": "https://github.com/simonw/datasette-ripgrep",
-            "description_html": "Try it out at <a href=\"/-/ripgrep\">/-/ripgrep</a>",
-            "plugins": {
-                "datasette-ripgrep": {
-                    "path": "/app/all",
-                    "time_limit": 3.0
-                 }
-            }
-        }' > metadata.json
+        echo '
+        title: datasette-ripgrep demo
+        about: simonw/datasette-ripgrep
+        about_url: https://github.com/simonw/datasette-ripgrep
+        description_html: |-
+          <style>
+          form.ripgrep label {
+              font-weight: normal;
+              display: inline;
+          }
+          </style>
+          <form class="ripgrep" action="/-/ripgrep" method="get">
+            <p>
+                <input type="search" name="pattern" value="">
+                <input type="submit" value="Search">
+            </p>
+            <p><strong>Options:</strong> <label><input type="checkbox" name="literal"> Literal search (not regex)</label> <label><input type="checkbox" name="ignore"> Ignore case</label></p>
+            <p>
+                <label><strong>File pattern</strong>: &nbsp;<input type="text" style="max-width: 20em" name="glob" value=""></label>
+            </p>
+            <p class="glob-examples">For example <code>*.py</code> or <code>**/templates/**/*.html</code> or <code>datasette/**</code> or </code><code>!setup.py</code>
+            </p>
+          </form>
+        plugins:
+          datasette-ripgrep:
+            path: /app/all
+            time_limit: 3.0
+        ' > metadata.yml
     - name: Set up Cloud Run
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
@@ -68,7 +84,7 @@ jobs:
         gcloud config set run/region us-central1
         gcloud config set project datasette-222320
         datasette publish cloudrun \
-          --metadata metadata.json \
+          --metadata metadata.yml \
           --static all:all \
           --install=https://github.com/simonw/datasette-ripgrep/archive/main.zip \
           --service datasette-ripgrep \
