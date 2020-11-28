@@ -33,7 +33,7 @@ code:before {
 <script>
 var highlightStyle = document.getElementById('highlightStyle');
 function highlightLineFromFragment() {
-    if (/L\d+/.exec(location.hash)) {
+    if (/^#L\d+$/.exec(location.hash)) {
         highlightStyle.innerText = `${location.hash} { background-color: yellow; }`;
     }
 }
