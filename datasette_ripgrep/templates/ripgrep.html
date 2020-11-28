@@ -59,16 +59,19 @@ pre.match {
 
 {% if time_limit_hit %}<p>Time limit exceeded.</p>{% endif %}
 
+{% set ns = namespace(ended=true) %}
+
 {% for result in results %}
     {% if result.type == "begin" %}
         <h3>{{ fix_path(result.data.path.text) }}</h3>
-        <div style="overflow-x: auto">{% set ended=0 %}
+        <div style="overflow-x: auto">{% set ns.ended = false %}
     {% endif %}
     {% if result.type in ("match", "context") %}
         <pre{% if result.type == "match" %} class="match"{% endif %}><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a> {{ result.data.lines.text }}</pre>
     {% endif %}
-    {% if result.type == "end" %}{% set ended=1 %}    </div>{% endif %}
+    {% if result.type == "end" %}{% set ns.ended = true %}    </div>{% endif %}
 {% endfor %}
-{% if not ended %}</div>{% endif %}
+{% if not ns.ended %}        </div>{% endif %}
+
 
 {% endblock %}
