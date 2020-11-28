@@ -38,15 +38,13 @@ jobs:
             or full_name like 'simonw/sqlite-%'
             or full_name like '%-to-sqlite'
           ) and full_name not like '%-support'
-        )
-      "
+        )"
     - name: Git clone my datasette* repos
       run: |-
         mkdir all
         cd all
         for line in $(
-          sqlite-utils ../repos.db "select full_name from repos" \
-            --csv --no-headers
+          sqlite-utils ../repos.db "select full_name from repos" --csv --no-headers
         )
         do
           git clone https://github.com/$line --depth 1
