@@ -28,13 +28,20 @@ jobs:
         # Need latest datasette for --apt-get-install option
         pip install https://github.com/simonw/datasette/archive/main.zip
     - name: Fetch list of my repos
-      run: github-to-sqlite repos simonw.db simonw
+      run: github-to-sqlite repos repos.db simonw dogsheep
     - name: Git clone my datasette* repos
       run: |-
         mkdir all
         cd all
         for line in $(
-          sqlite-utils ../simonw.db "select full_name from repos where full_name like 'simonw/datasette%'" \
+          sqlite-utils ../repos.db "
+            select full_name from repos
+            where (
+              full_name like 'simonw/datasette%'
+              or full_name like 'simonw/sqlite-%'
+              or full_name like '%-to-sqlite'
+            ) and full_name not like '%-support'
+          " \
           --csv --no-headers
         )
         do
@@ -83,7 +90,7 @@ jobs:
       run: |-
         gcloud config set run/region us-central1
         gcloud config set project datasette-222320
-        datasette publish cloudrun \
+        datasette publish cloudrun repos.db \
           --metadata metadata.yml \
           --static all:all \
           --install=https://github.com/simonw/datasette-ripgrep/archive/main.zip \
