@@ -82,7 +82,7 @@ jobs:
         plugins:
           datasette-ripgrep:
             path: /app/all
-            time_limit: 3.0
+            time_limit: 5.0
         ' > metadata.yml
     - name: Set up Cloud Run
       uses: google-github-actions/setup-gcloud@master
