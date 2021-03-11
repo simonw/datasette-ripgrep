@@ -48,17 +48,15 @@ async def test_plugin_is_installed(datasette):
                 (
                     "        <h3>one.txt</h3>\n"
                     '        <div style="overflow-x: auto">\n'
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L2">2   </a> There</pre>\n'
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L3">3   </a> This</pre>\n'
-                    '        <pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> '
-                    "Is a.test file</pre>\n"
-                    "        </div>\n"
+                    '        <pre><a href="/-/ripgrep/view/one.txt#L2">2   </a>There</pre>\n'
+                    '        <pre><a href="/-/ripgrep/view/one.txt#L3">3   </a>This</pre>\n'
+                    '        <pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>\n'
+                    "        </div>"
                 ),
                 (
                     "        <h3>sub/two.txt</h3>\n"
                     '        <div style="overflow-x: auto">\n'
-                    '        <pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   '
-                    "</a> Second test file</pre>\n"
+                    '        <pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>\n'
                     "        </div>\n"
                 ),
             ],
@@ -70,7 +68,7 @@ async def test_plugin_is_installed(datasette):
             "EST",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
             ],
             [],
         ),
@@ -79,10 +77,10 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
                 # " test" matches regex ".test"
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
             ],
             [],
         ),
@@ -91,12 +89,12 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a> Is a.test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
             ],
             # " test" does not match literal ".test"
             [
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
             ],
         ),
         (
@@ -104,7 +102,7 @@ async def test_plugin_is_installed(datasette):
             "test",
             [
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a> Second test file</pre>',
+                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
             ],
             ["<h3>one.txt</h3>"],
         ),
@@ -140,7 +138,7 @@ async def test_ripgrep_pattern_not_treated_as_flag(datasette):
         """
         <h3>{{curlies}}.txt</h3>
         <div style="overflow-x: auto">
-        <pre class="match"><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a> File with curlies in the name -v</pre>
+        <pre class="match"><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a>File with curlies in the name -v</pre>
         </div>
         """.strip()
         in html

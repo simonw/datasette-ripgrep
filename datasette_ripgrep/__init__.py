@@ -103,6 +103,20 @@ async def ripgrep(request, datasette):
     def fix_path(path_):
         return str(Path(path_).relative_to(path))
 
+    try:
+        widest_line_number = len(
+            str(
+                max(
+                    result["data"]["line_number"]
+                    for result in results
+                    if "line_number" in result["data"]
+                )
+            )
+        )
+    except ValueError:
+        # max() arg is an empty sequence
+        widest_line_number = 1
+
     return Response.html(
         await datasette.render_template(
             "ripgrep.html",
@@ -115,6 +129,7 @@ async def ripgrep(request, datasette):
                 "literal": literal,
                 "ignore": ignore,
                 "globs": globs,
+                "widest_line_number": widest_line_number,
             },
         )
     )
