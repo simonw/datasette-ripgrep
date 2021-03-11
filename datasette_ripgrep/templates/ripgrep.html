@@ -89,7 +89,8 @@ Array.from(document.querySelectorAll('pre span')).forEach(span => {
         span.textContent = content.slice(0, 400);
         let original = content;
         const a = document.createElement('a');
-        a.innerText = '[ ... ]';
+        a.innerText = '[...]';
+        a.style.fontWeight = 'bold';
         a.href = span.parentNode.querySelector('a').href;
         span.appendChild(a);
         a.addEventListener('click', e => {
