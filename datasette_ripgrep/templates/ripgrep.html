@@ -8,7 +8,7 @@ pre {
     padding-left: {{ widest_line_number + 1.5 }}ch;
     white-space: pre-wrap;
 }
-pre a:link {
+pre a.line-number:link {
     -webkit-user-select: none;
     display: inline-block;
     width: {{ widest_line_number + 1.5 }}ch;
@@ -75,11 +75,30 @@ pre.match {
         <div style="overflow-x: auto">{% set ns.ended = false %}
     {% endif %}
     {% if result.type in ("match", "context") %}
-        <pre{% if result.type == "match" %} class="match"{% endif %}><a href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a>{{ result.data.lines.text }}</pre>
+        <pre{% if result.type == "match" %} class="match"{% endif %}><a class="line-number" href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a><span>{{ result.data.lines.text }}</span></pre>
     {% endif %}
     {% if result.type == "end" %}{% set ns.ended = true %}    </div>{% endif %}
 {% endfor %}
 {% if not ns.ended %}        </div>{% endif %}
 
+<script>
+// Truncate really long lines
+Array.from(document.querySelectorAll('pre span')).forEach(span => {
+    const content = span.innerText;
+    if (content.length > 400) {
+        span.textContent = content.slice(0, 400);
+        let original = content;
+        const a = document.createElement('a');
+        a.innerText = '[ ... ]';
+        a.href = span.parentNode.querySelector('a').href;
+        span.appendChild(a);
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            span.innerText = original;
+        })
+
+    }
+});
+</script>
 
 {% endblock %}

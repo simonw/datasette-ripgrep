@@ -48,15 +48,15 @@ async def test_plugin_is_installed(datasette):
                 (
                     "        <h3>one.txt</h3>\n"
                     '        <div style="overflow-x: auto">\n'
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L2">2   </a>There</pre>\n'
-                    '        <pre><a href="/-/ripgrep/view/one.txt#L3">3   </a>This</pre>\n'
-                    '        <pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>\n'
+                    '        <pre><a class="line-number" href="/-/ripgrep/view/one.txt#L2">2   </a><span>There</span></pre>\n'
+                    '        <pre><a class="line-number" href="/-/ripgrep/view/one.txt#L3">3   </a><span>This</span></pre>\n'
+                    '        <pre class="match"><a class="line-number" href="/-/ripgrep/view/one.txt#L4">4   </a><span>Is a.test file</span></pre>\n'
                     "        </div>"
                 ),
                 (
                     "        <h3>sub/two.txt</h3>\n"
                     '        <div style="overflow-x: auto">\n'
-                    '        <pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>\n'
+                    '        <pre class="match"><a class="line-number" href="/-/ripgrep/view/sub/two.txt#L1">1   </a><span>Second test file</span></pre>\n'
                     "        </div>\n"
                 ),
             ],
@@ -68,7 +68,7 @@ async def test_plugin_is_installed(datasette):
             "EST",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/one.txt#L4">4   </a><span>Is a.test file</span></pre>',
             ],
             [],
         ),
@@ -77,10 +77,10 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/one.txt#L4">4   </a><span>Is a.test file</span></pre>',
                 # " test" matches regex ".test"
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/sub/two.txt#L1">1   </a><span>Second test file</span></pre>',
             ],
             [],
         ),
@@ -89,12 +89,12 @@ async def test_plugin_is_installed(datasette):
             ".test",
             [
                 "<h3>one.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/one.txt#L4">4   </a>Is a.test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/one.txt#L4">4   </a><span>Is a.test file</span></pre>',
             ],
             # " test" does not match literal ".test"
             [
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/sub/two.txt#L1">1   </a><span>Second test file</span></pre>',
             ],
         ),
         (
@@ -102,7 +102,7 @@ async def test_plugin_is_installed(datasette):
             "test",
             [
                 "<h3>sub/two.txt</h3>",
-                '<pre class="match"><a href="/-/ripgrep/view/sub/two.txt#L1">1   </a>Second test file</pre>',
+                '<pre class="match"><a class="line-number" href="/-/ripgrep/view/sub/two.txt#L1">1   </a><span>Second test file</span></pre>',
             ],
             ["<h3>one.txt</h3>"],
         ),
@@ -121,8 +121,12 @@ async def test_ripgrep_search(
 ):
     response = await datasette.client.get("/-/ripgrep?{}".format(querystring))
     assert "<title>ripgrep: {}</title>".format(expected_title) in response.text
-    html = re.sub(r"(\s*\n)+", "\n", response.text).replace("\n</pre>", "</pre>")
+    html = re.sub(r"(\s*\n)+", "\n", response.text).replace("\n</span>", "</span>")
     for fragment in expected_fragments:
+        # Useful for debugging - uncomment so --pdb gives you 'i'
+        # telling you where the first match of the fragment missed.
+        # for i in range(len(fragment)):
+        #     assert fragment[:i] in html
         assert fragment in html
     for fragment in unexpected_fragments:
         assert fragment not in html
@@ -138,7 +142,7 @@ async def test_ripgrep_pattern_not_treated_as_flag(datasette):
         """
         <h3>{{curlies}}.txt</h3>
         <div style="overflow-x: auto">
-        <pre class="match"><a href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a>File with curlies in the name -v</pre>
+        <pre class="match"><a class="line-number" href="/-/ripgrep/view/%7B%7Bcurlies%7D%7D.txt#L1">1   </a><span>File with curlies in the name -v</span></pre>
         </div>
         """.strip()
         in html
