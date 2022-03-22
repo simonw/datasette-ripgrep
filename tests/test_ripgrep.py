@@ -6,7 +6,7 @@ import textwrap
 
 
 @pytest.fixture(scope="session")
-def datasette(tmp_path_factory):
+def src(tmp_path_factory):
     root = tmp_path_factory.mktemp("root")
     src = root / "src"
     src.mkdir()
@@ -14,6 +14,11 @@ def datasette(tmp_path_factory):
     (src / "sub").mkdir()
     (src / "sub/two.txt").write_text("Second test file")
     (src / "{{curlies}}.txt").write_text("File with curlies in the name -v")
+    return src
+
+
+@pytest.fixture(scope="session")
+def datasette(src):
     return Datasette(
         [],
         memory=True,
@@ -215,14 +220,23 @@ async def test_menu_link(datasette):
         ({"allow": {"id": "user"}}, True, "/-/ripgrep/view/one.txt", 200),
     ],
 )
-async def test_permissions(datasette, metadata, authenticated, path, expected_status):
-    original = datasette._metadata
-    try:
-        datasette._metadata = {**datasette._metadata, **metadata}
-        cookies = {}
-        if authenticated:
-            cookies["ds_actor"] = datasette.sign({"a": {"id": "user"}}, "actor")
-        response = await datasette.client.get(path, cookies=cookies)
-        assert response.status_code == expected_status
-    finally:
-        datasette._metadata = original
+async def test_permissions(src, metadata, authenticated, path, expected_status):
+    datasette = Datasette(
+        [],
+        memory=True,
+        metadata={
+            **{
+                "plugins": {
+                    "datasette-ripgrep": {
+                        "path": str(src),
+                    }
+                },
+            },
+            **metadata,
+        },
+    )
+    cookies = {}
+    if authenticated:
+        cookies["ds_actor"] = datasette.sign({"a": {"id": "user"}}, "actor")
+    response = await datasette.client.get(path, cookies=cookies)
+    assert response.status_code == expected_status
