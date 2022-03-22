@@ -7,6 +7,8 @@
 
 Web interface for searching your code using [ripgrep](https://github.com/BurntSushi/ripgrep), built as a [Datasette](https://datasette.io/) plugin
 
+For background on this project see [datasette-ripgrep: deploy a regular expression search engine for your source code](https://simonwillison.net/2020/Nov/28/datasette-ripgrep/).
+
 ## Demo
 
 Try this plugin out at https://ripgrep.datasette.io/-/ripgrep - where you can run regular expression searches across the source code of Datasette and all of the `datasette-*` plugins belonging to the [simonw GitHub user](https://github.com/simonw).
