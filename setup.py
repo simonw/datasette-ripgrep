@@ -25,6 +25,10 @@ setup(
         "Changelog": "https://github.com/simonw/datasette-ripgrep/releases",
     },
     license="Apache License, Version 2.0",
+    classifiers=[
+        "Framework :: Datasette",
+        "License :: OSI Approved :: Apache Software License",
+    ],
     version=VERSION,
     packages=["datasette_ripgrep"],
     entry_points={"datasette": ["ripgrep = datasette_ripgrep"]},
@@ -32,5 +36,5 @@ setup(
     install_requires=["datasette"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
     tests_require=["datasette-ripgrep[test]"],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )
