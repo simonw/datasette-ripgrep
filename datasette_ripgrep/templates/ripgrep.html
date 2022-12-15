@@ -23,6 +23,9 @@ form.ripgrep label {
 pre.match {
     background-color: #FFFF99;
 }
+pre.gap {
+    margin-top: 1em;
+}
 .glob-examples {
     font-size: 0.85em;
 }
@@ -68,8 +71,8 @@ pre.match {
         <div style="overflow-x: auto">{% set ns.ended = false %}
     {% endif %}
     {% if result.type in ("match", "context") %}
-        <pre{% if result.type == "match" %} class="match"{% endif %}><a class="line-number" href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a><span>{{ result.data.lines.text }}</span></pre>
-    {% endif %}
+        <pre class="{% if result.type == "match" %}match{% endif %}{% if ns.prev_line and result.data.line_number - ns.prev_line > 1  %} gap{% endif %}"><a class="line-number" href="{{ urls.path("/-/ripgrep/view/" + url_quote(fix_path(result.data.path.text))) }}#L{{ result.data.line_number }}">{{ "%-4s" | format(result.data.line_number) }}</a><span>{{ result.data.lines.text }}</span></pre>
+    {% set ns.prev_line = result.data.line_number %}{% endif %}
     {% if result.type == "end" %}{% set ns.ended = true %}    </div>{% endif %}
 {% endfor %}
 {% if not ns.ended %}        </div>{% endif %}

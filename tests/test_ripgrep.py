@@ -13,6 +13,8 @@ def src(tmp_path_factory):
     (src / "one.txt").write_text("Hello\nThere\nThis\nIs a.test file")
     (src / "sub").mkdir()
     (src / "sub/two.txt").write_text("Second test file")
+    # This one is for testing class="gap"
+    (src / "sub/three.txt").write_text("XXX\nYYY\nZZZ\nZZZ\nZZZ\nZZZ\nZZZ\nYYY")
     (src / "{{curlies}}.txt").write_text("File with curlies in the name -v")
     return src
 
@@ -53,8 +55,8 @@ async def test_plugin_is_installed(datasette):
                 (
                     "        <h3>one.txt</h3>\n"
                     '        <div style="overflow-x: auto">\n'
-                    '        <pre><a class="line-number" href="/-/ripgrep/view/one.txt#L2">2   </a><span>There</span></pre>\n'
-                    '        <pre><a class="line-number" href="/-/ripgrep/view/one.txt#L3">3   </a><span>This</span></pre>\n'
+                    '        <pre class=""><a class="line-number" href="/-/ripgrep/view/one.txt#L2">2   </a><span>There</span></pre>\n'
+                    '        <pre class=""><a class="line-number" href="/-/ripgrep/view/one.txt#L3">3   </a><span>This</span></pre>\n'
                     '        <pre class="match"><a class="line-number" href="/-/ripgrep/view/one.txt#L4">4   </a><span>Is a.test file</span></pre>\n'
                     "        </div>"
                 ),
@@ -118,6 +120,15 @@ async def test_plugin_is_installed(datasette):
                 "<h3>one.txt</h3>",
             ],
             ["<h3>sub/two.txt</h3>"],
+        ),
+        (
+            "pattern=YYY",
+            "YYY",
+            [
+                "<h3>sub/three.txt</h3>",
+                '<pre class=" gap"><a class="line-number" href="/-/ripgrep/view/sub/three.txt#L6">',
+            ],
+            [],
         ),
     ),
 )
