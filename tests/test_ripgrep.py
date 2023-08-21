@@ -251,3 +251,32 @@ async def test_permissions(src, metadata, authenticated, path, expected_status):
         cookies["ds_actor"] = datasette.sign({"a": {"id": "user"}}, "actor")
     response = await datasette.client.get(path, cookies=cookies)
     assert response.status_code == expected_status
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("configured", (True, False))
+async def test_configuration(configured):
+    metadata = {}
+    if configured:
+        metadata = {
+            "plugins": {
+                "datasette-ripgrep": {
+                    "path": "/tmp",
+                }
+            }
+        }
+    datasette = Datasette(memory=True, metadata=metadata)
+    response = await datasette.client.get("/-/ripgrep")
+    if not configured:
+        assert response.status_code == 500
+        assert "The path plugin configuration is required." in response.text
+    else:
+        assert response.status_code == 200
+    # And check the navigation menu
+    response2 = await datasette.client.get("/")
+    assert response2.status_code == 200
+    menu_fragment = '<li><a href="/-/ripgrep">ripgrep search</a></li>'
+    if not configured:
+        assert menu_fragment not in response2.text
+    else:
+        assert menu_fragment in response2.text

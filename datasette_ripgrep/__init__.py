@@ -184,6 +184,9 @@ def register_routes():
 
 @hookimpl
 def menu_links(datasette, actor):
+    config = datasette.plugin_config("datasette-ripgrep") or {}
+    if not config.get("path"):
+        return
     return [
         {"href": datasette.urls.path("/-/ripgrep"), "label": "ripgrep search"},
     ]
