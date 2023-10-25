@@ -131,6 +131,7 @@ async def ripgrep(request, datasette):
                 "globs": globs,
                 "widest_line_number": widest_line_number,
             },
+            request=request,
         )
     )
 
@@ -159,6 +160,7 @@ async def view_file(request, datasette):
                 "lines": enumerate(lines),
                 "widest_line_number": widest_line_number,
             },
+            request=request,
         )
     )
 
