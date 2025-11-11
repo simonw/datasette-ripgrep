@@ -33,19 +33,15 @@ The `rg` executable needs to be [installed](https://github.com/BurntSushi/ripgre
 
 This plugin requires configuration: it needs to a `path` setting so that it knows where to run searches.
 
-Create a `metadata.json` file that looks like this:
+Create a `datasette.yaml` file that looks like this:
 
-```json
-{
-    "plugins": {
-        "datasette-ripgrep": {
-            "path": "/path/to/your/files"
-        }
-    }
-}
+```yaml
+plugins:
+  datasette-ripgrep:
+    path: /path/to/your/files
 ```
 
-Now run Datasette using `datasette -m metadata.json`. The plugin will add an interface at `/-/ripgrep` for running searches.
+Now run Datasette using `datasette --config datasette.yaml`. The plugin will add an interface at `/-/ripgrep` for running searches.
 
 ## Plugin configuration
 

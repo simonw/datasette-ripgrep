@@ -24,7 +24,7 @@ def datasette(src):
     return Datasette(
         [],
         memory=True,
-        metadata={
+        config={
             "plugins": {
                 "datasette-ripgrep": {
                     "path": str(src),
@@ -212,7 +212,7 @@ async def test_menu_link(datasette):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "metadata,authenticated,path,expected_status",
+    "config_overrides,authenticated,path,expected_status",
     [
         # Deny all access
         ({"allow": False}, False, "/-/ripgrep", 403),
@@ -231,11 +231,11 @@ async def test_menu_link(datasette):
         ({"allow": {"id": "user"}}, True, "/-/ripgrep/view/one.txt", 200),
     ],
 )
-async def test_permissions(src, metadata, authenticated, path, expected_status):
+async def test_permissions(src, config_overrides, authenticated, path, expected_status):
     datasette = Datasette(
         [],
         memory=True,
-        metadata={
+        config={
             **{
                 "plugins": {
                     "datasette-ripgrep": {
@@ -243,7 +243,7 @@ async def test_permissions(src, metadata, authenticated, path, expected_status):
                     }
                 },
             },
-            **metadata,
+            **config_overrides,
         },
     )
     cookies = {}
@@ -256,16 +256,16 @@ async def test_permissions(src, metadata, authenticated, path, expected_status):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("configured", (True, False))
 async def test_configuration(configured):
-    metadata = {}
+    config = {}
     if configured:
-        metadata = {
+        config = {
             "plugins": {
                 "datasette-ripgrep": {
                     "path": "/tmp",
                 }
             }
         }
-    datasette = Datasette(memory=True, metadata=metadata)
+    datasette = Datasette(memory=True, config=config)
     response = await datasette.client.get("/-/ripgrep")
     if not configured:
         assert response.status_code == 500

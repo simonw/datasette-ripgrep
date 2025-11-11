@@ -26,15 +26,14 @@ setup(
     },
     license="Apache License, Version 2.0",
     classifiers=[
-        "Framework :: Datasette",
-        "License :: OSI Approved :: Apache Software License",
+        "Framework :: Datasette"
     ],
     version=VERSION,
     packages=["datasette_ripgrep"],
     entry_points={"datasette": ["ripgrep = datasette_ripgrep"]},
     package_data={"datasette_ripgrep": ["templates/*.html"]},
-    install_requires=["datasette"],
+    install_requires=["datasette>=1.0a21"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
     tests_require=["datasette-ripgrep[test]"],
-    python_requires=">=3.7",
+    python_requires=">=3.10",
 )

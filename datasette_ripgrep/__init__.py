@@ -166,13 +166,11 @@ async def view_file(request, datasette):
 
 
 async def check_permission(request, datasette):
-    if (
-        await datasette.permission_allowed(
-            request.actor,
-            "view-instance",
-            default=None,
-        )
-    ) is False:
+    can_view = await datasette.allowed(
+        action="view-instance",
+        actor=request.actor,
+    )
+    if not can_view:
         raise Forbidden("view-instance denied")
 
 
